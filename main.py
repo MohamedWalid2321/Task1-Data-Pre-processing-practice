@@ -54,16 +54,18 @@ minority_upsampled=resample(minority #the data to be resampled
                             ,replace=True, 
                             n_samples=len(majority), #see how many samples we need to match the majority class
                             random_state=123) 
-#By setting random_state to a specific number (e.g., random_state=42 or random_state=123), you’re telling Python:
+#By setting random_state to a specific number you’re telling Python:
 # “Use the same random pattern every time I run this code.”
-# This makes your results reproducible — meaning you (and others) can get the exact same output when running the code again.
+# This makes your results reproducible — meaning you (and others) can get the exact 
+# same output when running the code again.
 
-#here is return a new DataFrame where the minority class 
+#here return a new DataFrame where the minority class 
 #has been upsampled to match the number of samples in the majority class from 282 to 718
 
 
 #3.combine the upsampled minority class with the majority class
-#since we came up with a new 718 samples for the minority class now we need to merge it with the old 718 of the majority class
+#since we came up with a new 718 samples for the minority class now we need to merge it with the old 
+# 718 of the majority class
 data_balanced=pd.concat([majority,minority_upsampled])
 #the concat is row-wise by default (axis=0)
 
@@ -76,7 +78,8 @@ data_balanced=pd.concat([majority,minority_upsampled])
 #3) Standardize numerical features
 #we use standardization because some ML algorithms might give more importance to features with larger scales
 #standardization transforms the data to have a mean of 0 and a standard deviation of 1
-#so we cal the mean of each feature and subtract it from each value in that feature and then divide by the standard deviation of that feature
+#so we cal the mean of each feature and subtract it from each value in that feature and 
+# then divide by the standard deviation of that feature
 #After standardization, the feature is centered around 0 and its spread is scaled equally
 scaler=StandardScaler()
 
@@ -98,12 +101,13 @@ data_balanced[['feature1','feature2']]=scaler.fit_transform(data_balanced[['feat
 
 
 #5) Encode categorical features
-#we use one-hot encoding because it is a simple and effective way to convert categorical variables into a format that can be provided to ML algorithms
+#we use one-hot encoding because it is a simple and effective way
+#  to convert categorical variables into a format that can be provided to ML algorithms
 #it creates a new binary column for each category in the original categorical feature
 
 data_encoded=pd.get_dummies(data_balanced,columns=['categorical_feature'])
 
-#6) Splitting the Dataset into Training and Test Sets¶
+#6) Splitting the Dataset into Training and Test Sets
 X=data_encoded.drop('label',axis=1) #features
 y=data_encoded['label']
 
