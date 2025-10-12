@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.impute import SimpleImputer
 from sklearn.utils import resample
 from sklearn.feature_selection import SelectKBest, f_classif
+import matplotlib.pyplot as plt
 
 np.random.seed(0) #every time you run the code, you’ll get the same random values
 data = pd.DataFrame({
@@ -70,6 +71,8 @@ data_balanced=pd.concat([majority,minority_upsampled])
 #we choosed to upsample rather than downsample because we don't want to lose any data in addition we 
 #don't have a very large dataset to begin with
 
+
+
 #3) Standardize numerical features
 #we use standardization because some ML algorithms might give more importance to features with larger scales
 #standardization transforms the data to have a mean of 0 and a standard deviation of 1
@@ -77,7 +80,10 @@ data_balanced=pd.concat([majority,minority_upsampled])
 #After standardization, the feature is centered around 0 and its spread is scaled equally
 scaler=StandardScaler()
 
-data[['feature1','feature2']]=scaler.fit_transform(data[['feature1','feature2']])
+data_balanced[['feature1','feature2']]=scaler.fit_transform(data_balanced[['feature1','feature2']])
+
+
+
 
 # #4) Normalize numerical features
 # Normalize is another scaling tech same as Standardization
@@ -85,6 +91,30 @@ data[['feature1','feature2']]=scaler.fit_transform(data[['feature1','feature2']]
 #both are used in different cases or algorithms
 
 # normalizer=MinMaxScaler()
-# data[['feature1','feature2']]=normalizer.fit_transform(data[['feature1','feature2']])
+# data_balanced[['feature1','feature2']]=normalizer.fit_transform(data_balanced[['feature1','feature2']])
 
 #in this case we will using the standardized data because it is roughly normally distributed
+
+
+
+#5) Encode categorical features
+#we use one-hot encoding because it is a simple and effective way to convert categorical variables into a format that can be provided to ML algorithms
+#it creates a new binary column for each category in the original categorical feature
+
+data_encoded=pd.get_dummies(data_balanced,columns=['categorical_feature'])
+
+#6) Splitting the Dataset into Training and Test Sets¶
+X=data_encoded.drop('label',axis=1) #features
+y=data_encoded['label']
+
+x_train,x_test,y_train,y_test=train_test_split(X,y,test_size=0.2,random_state=42)
+
+#7) Feature Selection
+#we use SelectKBest with the ANOVA F-value method (f_classif) to select the top k features that have the highest correlation with the target variable
+selector=SelectKBest(f_classif,k=3)
+X_new=selector.fit_transform(x_train,y_train)
+
+
+data_encoded.hist(bins=50,figsize=(20,15))
+data.hist(bins=50,figsize=(20,15))
+plt.show()
