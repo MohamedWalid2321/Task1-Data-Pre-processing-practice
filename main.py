@@ -16,23 +16,25 @@ data = pd.DataFrame({
     'categorical_feature': np.random.choice(['Category1', 'Category2', 'Category3'], size=1000),
     'label': np.random.choice([0, 1], size=1000, p=[0.7, 0.3])
     # 1000 samples with 70% of class 0 and 30% of class 1
-    # bacuase we are randoming choices of 0 and 1 it printed 718 0's and 282 1's not giving a
+    # we are randoming choices of 0 and 1, it printed 718 0's and 282 1's not giving a
     # perfect 70% and 30% split
 })
 
 #1) Handle missing values
 
-#1.Introduce some missing values if non exist
+#1.Introduce some missing values if non exist for illustration 
 
 data.loc[data.sample(frac=0.05).index, 'feature1'] = np.nan
 #data.sample(frac=0.05) randomly selects 5% of the rows in the DataFrame
 #.index gets the indices of these rows
+
 data.loc[data.sample(frac=0.05).index, 'feature2'] = np.nan
 
 
 #2.Handle missing values
 imputer = SimpleImputer(strategy='mean')
 # We used mean because our numerical data follows a roughly normal distribution
+
 data[['feature1', 'feature2']] = imputer.fit_transform(data[['feature1', 'feature2']])
 #then we fill the missing values in 'feature1' and 'feature2' with the mean of their respective columns
 
@@ -53,10 +55,11 @@ majority=data[data.label==0]
 minority_upsampled=resample(minority #the data to be resampled
                             ,replace=True, 
                             n_samples=len(majority), #see how many samples we need to match the majority class
-                            random_state=123) 
+                            random_state=123)
+
+
 #By setting random_state to a specific number you’re telling Python:
 # “Use the same random pattern every time I run this code.”
-# This makes your results reproducible — meaning you (and others) can get the exact 
 # same output when running the code again.
 
 #here return a new DataFrame where the minority class 
@@ -66,6 +69,7 @@ minority_upsampled=resample(minority #the data to be resampled
 #3.combine the upsampled minority class with the majority class
 #since we came up with a new 718 samples for the minority class now we need to merge it with the old 
 # 718 of the majority class
+
 data_balanced=pd.concat([majority,minority_upsampled])
 #the concat is row-wise by default (axis=0)
 
